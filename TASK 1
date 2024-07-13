@@ -1,0 +1,85 @@
+/*A comprehensive system to manage student records, including personal details, courses, enrollments, and grades.
+This project involves creating and managing relational databases using SQL.
+
+Features:
+->Student Management: Store and retrieve personal details.
+->Course Management: Maintain course information.
+->Enrollment Management: Track student enrollments.
+->Grade Management: Record and retrieve student grades.
+ */
+
+CREATE DATABASE student_record;
+USE student_record;
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    date_of_birth DATE,
+    email VARCHAR(100),
+    phone_number VARCHAR(15)
+);
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100),
+    course_description TEXT,
+    credits INT
+);
+CREATE TABLE Enrollments (
+    enrollment_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    FOREIGN KEY (student_id) REFERENCES Students(student_id),
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
+);
+CREATE TABLE Grades (
+    grade_id INT PRIMARY KEY,
+    enrollment_id INT,
+    grade CHAR(2),
+    FOREIGN KEY (enrollment_id) REFERENCES Enrollments(enrollment_id)
+);
+INSERT INTO Students (student_id, first_name, last_name, date_of_birth, email, phone_number)
+VALUES 
+(1, 'Anu', 'Jain', '2000-01-01', 'anu@example.com', '1234567890'),
+(2, 'Jany', 'Gupta', '2001-02-02', 'jany@example.com', '0987654321');
+
+INSERT INTO Courses (course_id, course_name, course_description, credits)
+VALUES 
+(1, 'Database Management', 'Learn the basics of database management.', 4),
+(2, 'Artificial Intelligence', 'Introduction to AI concepts and techniques.', 3);
+
+INSERT INTO Enrollments (enrollment_id, student_id, course_id, enrollment_date)
+VALUES 
+(1, 1, 1, '2024-07-01'),
+(2, 2, 2, '2024-07-02');
+
+INSERT INTO Grades (grade_id, enrollment_id, grade)
+VALUES 
+(1, 1, 'A'),
+(2, 2, 'B');
+
+-- Retrieve all students enrolled in a specific course:
+SELECT S.first_name, S.last_name, C.course_name, E.enrollment_date
+FROM Students S
+JOIN Enrollments E ON S.student_id = E.student_id
+JOIN Courses C ON E.course_id = C.course_id
+WHERE C.course_name = 'Database Management';
+
+-- Retrieve all courses a specific student is enrolled in:
+SELECT S.first_name, S.last_name, C.course_name, E.enrollment_date
+FROM Students S
+JOIN Enrollments E ON S.student_id = E.student_id
+JOIN Courses C ON E.course_id = C.course_id
+WHERE S.first_name = 'Anu' AND S.last_name = 'Jain';
+
+-- Retrieve all grades for a specific student:
+SELECT S.first_name, S.last_name, C.course_name, G.grade
+FROM Students S
+JOIN Enrollments E ON S.student_id = E.student_id
+JOIN Courses C ON E.course_id = C.course_id
+JOIN Grades G ON E.enrollment_id = G.enrollment_id
+WHERE S.first_name = 'Jany' AND S.last_name = 'Gupta';
+
+SHOW databases;
+SHOW tables;
+
